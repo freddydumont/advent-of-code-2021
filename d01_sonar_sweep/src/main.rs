@@ -45,7 +45,7 @@ fn main() {
 }
 
 /// count the number of increases in the sonar readings
-fn count_increases(input: &Vec<u32>) -> u32 {
+fn count_increases(input: &[u32]) -> u32 {
     let mut count: u32 = 0;
     let mut prev = &input[0];
 
@@ -61,7 +61,7 @@ fn count_increases(input: &Vec<u32>) -> u32 {
 }
 
 /// count the number of increases in the sonar readings by sliding window of 3 reading
-fn count_increases_by_window(input: &Vec<u32>) -> u32 {
+fn count_increases_by_window(input: &[u32]) -> u32 {
     let mut count: u32 = 0;
     // prev is now the total of a window, starting with the first 3 elements
     let mut prev = input[0] + input[1] + input[2];
