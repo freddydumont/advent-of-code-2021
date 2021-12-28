@@ -20,20 +20,26 @@ fn main() {
 
 /// returns the product of the final position's coordinates
 fn calculate_position(input: &[String]) -> i32 {
-    let mut position: (i32, i32) = (0, 0);
+    struct Coordinates {
+        x: i32,
+        y: i32,
+    }
+
+    let mut coordinates = Coordinates { x: 0, y: 0 };
 
     for command in input {
         let instruction: Vec<&str> = command.split(' ').collect();
+        let n = instruction[1].parse::<i32>().unwrap();
 
         match instruction[0] {
-            "forward" => position.0 += instruction[1].parse::<i32>().unwrap(),
-            "down" => position.1 += instruction[1].parse::<i32>().unwrap(),
-            "up" => position.1 -= instruction[1].parse::<i32>().unwrap(),
+            "forward" => coordinates.x += n,
+            "down" => coordinates.y += n,
+            "up" => coordinates.y -= n,
             _ => panic!("Error, invalid input."),
         };
     }
 
-    position.0 * position.1
+    coordinates.x * coordinates.y
 }
 
 #[cfg(test)]
