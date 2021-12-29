@@ -77,31 +77,32 @@ fn calculate_position_with_aim(input: &[String]) -> i32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use utils::convert_vec_strings;
 
     #[test]
     fn should_calculate_position_by_depth() {
-        let input = vec![
-            "forward 5".to_string(),
-            "down 5".to_string(),
-            "forward 8".to_string(),
-            "up 3".to_string(),
-            "down 8".to_string(),
-            "forward 2".to_string(),
-        ];
+        let input = convert_vec_strings(vec![
+            "forward 5",
+            "down 5",
+            "forward 8",
+            "up 3",
+            "down 8",
+            "forward 2",
+        ]);
 
         assert_eq!(150, calculate_position(&input));
     }
 
     #[test]
     fn should_calculate_position_with_aim() {
-        let input = vec![
-            "forward 5".to_string(),
-            "down 5".to_string(),
-            "forward 8".to_string(),
-            "up 3".to_string(),
-            "down 8".to_string(),
-            "forward 2".to_string(),
-        ];
+        let input = convert_vec_strings(vec![
+            "forward 5",
+            "down 5",
+            "forward 8",
+            "up 3",
+            "down 8",
+            "forward 2",
+        ]);
 
         assert_eq!(900, calculate_position_with_aim(&input));
     }
