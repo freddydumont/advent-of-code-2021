@@ -40,18 +40,29 @@ fn calculate_power_consumption(input: &[String]) -> u32 {
     gamma_decimal * epsilon_decimal
 }
 
+fn calculate_life_support_rating(input: &[String]) -> u32 {
+    0
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use utils::convert_vec_strings;
 
-    #[test]
-    fn should_calculate_power_consumption() {
-        let input = convert_vec_strings(vec![
+    fn input() -> Vec<String> {
+        convert_vec_strings(vec![
             "00100", "11110", "10110", "10111", "10101", "01111", "00111", "11100", "10000",
             "11001", "00010", "01010",
-        ]);
+        ])
+    }
 
-        assert_eq!(198, calculate_power_consumption(&input));
+    #[test]
+    fn should_calculate_power_consumption() {
+        assert_eq!(198, calculate_power_consumption(&input()));
+    }
+
+    #[test]
+    fn should_calculate_life_support_rating() {
+        assert_eq!(230, calculate_life_support_rating(&input()));
     }
 }
