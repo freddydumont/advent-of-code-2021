@@ -1,38 +1,7 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn should_count_increases() {
-        let input = vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
-
-        assert_eq!(7, count_increases(&input));
-    }
-
-    #[test]
-    fn should_count_increases_by_window() {
-        let input = vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
-
-        assert_eq!(5, count_increases_by_window(&input));
-    }
-}
+use utils::read_input;
 
 fn main() {
-    // Open the file in read-only mode (ignoring errors).
-    let file = File::open("src/input.txt").unwrap();
-    let reader = BufReader::new(file);
-
-    let mut input: Vec<u32> = Vec::with_capacity(2000);
-
-    // Read the file line by line using the lines() iterator from std::io::BufRead.
-    for line in reader.lines() {
-        let line = line.unwrap().parse::<u32>().unwrap();
-
-        input.push(line)
-    }
+    let input = read_input("src/input.txt", 2000);
 
     println!(
         "number of increases in sonar readings: {}",
@@ -77,4 +46,23 @@ fn count_increases_by_window(input: &[u32]) -> u32 {
     }
 
     count
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn should_count_increases() {
+        let input = vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
+
+        assert_eq!(7, count_increases(&input));
+    }
+
+    #[test]
+    fn should_count_increases_by_window() {
+        let input = vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
+
+        assert_eq!(5, count_increases_by_window(&input));
+    }
 }
