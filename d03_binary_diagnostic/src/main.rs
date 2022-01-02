@@ -3,7 +3,11 @@ use utils::read_input;
 fn main() {
     let input = read_input("src/input.txt", 1000);
 
-    print!("power consumption: {}", calculate_power_consumption(&input))
+    println!("power consumption: {}", calculate_power_consumption(&input));
+    println!(
+        "life support rating: {}",
+        calculate_life_support_rating(&input)
+    );
 }
 
 /// takes a list of binary strings as input and returns the product of the gamma and epsilon values
@@ -40,8 +44,65 @@ fn calculate_power_consumption(input: &[String]) -> u32 {
     gamma_decimal * epsilon_decimal
 }
 
+enum BitCriteria {
+    Zero,
+    One,
+}
+
+fn reduce_to_decimal(input: &[String], bit: usize, bit_criteria: BitCriteria) -> u32 {
+    // base case
+    let rows = input.len();
+    if rows == 1 {
+        return u32::from_str_radix(&input[0], 2).unwrap();
+    }
+
+    let mut i = 0;
+    let mut ones = 0;
+    let mut zeroes = 0;
+    while i < rows {
+        let chars = input[i].chars().collect::<Vec<char>>();
+        if chars[bit] == '1' {
+            ones += 1;
+        } else {
+            zeroes += 1;
+        }
+
+        i += 1;
+    }
+
+    let to_keep = match bit_criteria {
+        BitCriteria::One => {
+            if ones >= zeroes {
+                '1'
+            } else {
+                '0'
+            }
+        }
+        BitCriteria::Zero => {
+            if zeroes <= ones {
+                '0'
+            } else {
+                '1'
+            }
+        }
+    };
+
+    let mut new_input: Vec<String> = Vec::with_capacity(rows);
+    let mut j = 0;
+    while j < rows {
+        let chars = input[j].chars().collect::<Vec<char>>();
+        if chars[bit] == to_keep {
+            new_input.push(input[j].to_string());
+        }
+
+        j += 1;
+    }
+
+    reduce_to_decimal(&new_input, bit + 1, bit_criteria)
+}
+
 fn calculate_life_support_rating(input: &[String]) -> u32 {
-    0
+    reduce_to_decimal(input, 0, BitCriteria::One) * reduce_to_decimal(input, 0, BitCriteria::Zero)
 }
 
 #[cfg(test)]
