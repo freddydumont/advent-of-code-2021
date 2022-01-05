@@ -8,21 +8,32 @@ fn get_numbers(input: &str) -> Vec<u8> {
         .collect::<Vec<u8>>()
 }
 
-type Board = Vec<Vec<u8>>;
+#[derive(Clone, Copy, Debug)]
+struct Number {
+    digits: u8,
+    was_drawn: bool,
+}
+
+type Board = [[Number; 5]; 5];
 /// Parse the input to return a vec of Boards
 fn get_boards(input: &[String]) -> Vec<Board> {
     // each board is 6 lines, including the line break
     let board_count = (input.len() - 1) / 6;
 
-    let mut boards: Vec<Board> = vec![vec![Vec::with_capacity(5); 5]; board_count];
+    let line = [Number {
+        // default to a 3 digit number to check if initialized with input
+        digits: 255,
+        was_drawn: false,
+    }; 5];
+    let mut boards: Vec<Board> = vec![[line; 5]; board_count];
 
     let mut input_index = 2;
     let mut board_index = 0;
     let mut line_index = 0;
 
     while input_index < input.len() {
-        // when board is full, start the next one and reset line_index
-        if !(boards[board_index].last().unwrap().is_empty()) {
+        // when board is fully initialized with input values, start next board
+        if boards[board_index][4][4].digits != 255 {
             board_index += 1;
             line_index = 0;
         }
@@ -30,10 +41,16 @@ fn get_boards(input: &[String]) -> Vec<Board> {
         // skip linebreaks in input
         // note also filter_map which makes sure double spaces are ignored
         if !input[input_index].is_empty() {
-            boards[board_index][line_index] = input[input_index]
+            let parsed_line = input[input_index]
                 .split(' ')
                 .filter_map(|x| x.parse::<u8>().ok())
                 .collect::<Vec<u8>>();
+
+            let line = &mut boards[board_index][line_index];
+
+            for (i, num) in line.iter_mut().enumerate() {
+                num.digits = parsed_line[i];
+            }
 
             line_index += 1;
         }
