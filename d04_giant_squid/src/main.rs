@@ -64,13 +64,71 @@ fn get_boards(input: &[String]) -> Vec<Board> {
 fn main() {
     let input = read_input::<String>("src/input.txt", 601);
     let numbers = get_numbers(&input[0]);
-    let boards = get_boards(&input);
+    let mut boards = get_boards(&input);
 
-    bingo(&numbers, &boards);
+    println!("bingo = {:?}", bingo(&numbers, &mut boards));
 }
 
-fn bingo(numbers: &[u8], boards: &[Board]) -> u32 {
-    0
+fn mark_number(board: &mut Board, number: u8) {
+    for line in board {
+        for num in line {
+            if num.digits == number {
+                num.was_drawn = true;
+            }
+        }
+    }
+}
+
+fn check_win(board: &Board) -> bool {
+    let mut sequence = 0;
+
+    for line in board {
+        if sequence == 5 {
+            break;
+        }
+
+        sequence = 0;
+
+        for num in line {
+            if num.was_drawn {
+                sequence += 1;
+            }
+        }
+    }
+
+    sequence == 5
+}
+
+fn calculate_score(board: &Board, final_number: u8) -> u32 {
+    let mut sum = 0;
+
+    for line in board {
+        for num in line {
+            if !num.was_drawn {
+                sum += num.digits as u32;
+            }
+        }
+    }
+
+    sum * final_number as u32
+}
+
+fn bingo(numbers: &[u8], boards: &mut [Board]) -> u32 {
+    let mut score = 0;
+    // for each number
+    'outer: for (i, number) in numbers.iter().enumerate() {
+        for board in boards.iter_mut() {
+            mark_number(board, *number);
+
+            // only check for validity when at least 5 numbers are drawn
+            if i >= 4 && check_win(board) {
+                score = calculate_score(board, *number);
+                break 'outer;
+            }
+        }
+    }
+
+    score
 }
 
 #[cfg(test)]
@@ -106,8 +164,8 @@ mod tests {
     fn should_play_bingo() {
         let input = input();
         let numbers = get_numbers(&input[0]);
-        let boards = get_boards(&input);
+        let mut boards = get_boards(&input);
 
-        assert_eq!(4512, bingo(&numbers, &boards));
+        assert_eq!(4512, bingo(&numbers, &mut boards));
     }
 }
