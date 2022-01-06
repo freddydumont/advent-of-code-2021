@@ -129,6 +129,10 @@ fn bingo(numbers: &[u8], boards: &mut [Board]) -> u32 {
     score
 }
 
+fn let_squid_win(numbers: &[u8], boards: &mut [Board]) -> u32 {
+    0
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -198,5 +202,13 @@ mod tests {
         let mut boards = get_boards(&input);
 
         assert_eq!(242, bingo(&numbers, &mut boards));
+    }
+
+    fn should_let_squid_win() {
+        let input = input();
+        let numbers = get_numbers(&input[0]);
+        let mut boards = get_boards(&input);
+
+        assert_eq!(1924, let_squid_win(&numbers, &mut boards));
     }
 }
