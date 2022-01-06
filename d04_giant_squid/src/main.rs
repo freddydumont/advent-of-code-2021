@@ -80,23 +80,25 @@ fn mark_number(board: &mut Board, number: u8) {
 }
 
 fn check_win(board: &Board) -> bool {
-    let mut sequence = 0;
+    let mut horizontal = 0;
+    let mut vertical = [0; 5];
 
     for line in board {
-        if sequence == 5 {
+        if horizontal == 5 {
             break;
         }
 
-        sequence = 0;
+        horizontal = 0;
 
-        for num in line {
+        for (i, num) in line.iter().enumerate() {
             if num.was_drawn {
-                sequence += 1;
+                horizontal += 1;
+                vertical[i] += 1;
             }
         }
     }
 
-    sequence == 5
+    horizontal == 5 || vertical.contains(&5)
 }
 
 fn calculate_score(board: &Board, final_number: u8) -> u32 {
@@ -160,6 +162,30 @@ mod tests {
         ])
     }
 
+    fn column_win() -> Vec<String> {
+        convert_vec_strings(vec![
+            "22,8,21,6,1,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1",
+            "",
+            "22 13 17 11  0",
+            " 8  2 23  4 24",
+            "21  9 14 16  7",
+            " 6 10  3 18  5",
+            " 1 12 20 15 19",
+            "",
+            " 3 15  0  2 22",
+            " 9 18 13 17  5",
+            "19  8  7 25 23",
+            "20 11 10 24  4",
+            "14 21 16 12  6",
+            "",
+            "14 21 17 24  4",
+            "10 16 15  9 19",
+            "18  8 23 26 20",
+            "22 11 13  6  5",
+            " 2  0 12  3  7",
+        ])
+    }
+
     #[test]
     fn should_play_bingo() {
         let input = input();
@@ -167,5 +193,14 @@ mod tests {
         let mut boards = get_boards(&input);
 
         assert_eq!(4512, bingo(&numbers, &mut boards));
+    }
+
+    #[test]
+    fn should_check_columns() {
+        let input = column_win();
+        let numbers = get_numbers(&input[0]);
+        let mut boards = get_boards(&input);
+
+        assert_eq!(242, bingo(&numbers, &mut boards));
     }
 }
