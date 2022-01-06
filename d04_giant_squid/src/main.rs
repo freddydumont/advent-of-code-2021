@@ -69,17 +69,7 @@ fn main() {
     println!("bingo = {:?}", bingo(&numbers, &mut boards));
 }
 
-fn mark_number(board: &mut Board, number: u8) {
-    for line in board {
-        for num in line {
-            if num.digits == number {
-                num.was_drawn = true;
-            }
-        }
-    }
-}
-
-fn check_win(board: &Board) -> bool {
+fn mark_and_check_win(board: &mut Board, number: u8, i: usize) -> bool {
     let mut horizontal = 0;
     let mut vertical = [0; 5];
 
@@ -90,12 +80,21 @@ fn check_win(board: &Board) -> bool {
 
         horizontal = 0;
 
-        for (i, num) in line.iter().enumerate() {
+        for (i, num) in line.iter_mut().enumerate() {
+            if num.digits == number {
+                num.was_drawn = true;
+            }
+
             if num.was_drawn {
                 horizontal += 1;
                 vertical[i] += 1;
             }
         }
+    }
+
+    // only check for validity when at least 5 numbers are drawn
+    if i < 4 {
+        return false;
     }
 
     horizontal == 5 || vertical.contains(&5)
@@ -120,10 +119,7 @@ fn bingo(numbers: &[u8], boards: &mut [Board]) -> u32 {
     // for each number
     'outer: for (i, number) in numbers.iter().enumerate() {
         for board in boards.iter_mut() {
-            mark_number(board, *number);
-
-            // only check for validity when at least 5 numbers are drawn
-            if i >= 4 && check_win(board) {
+            if mark_and_check_win(board, *number, i) {
                 score = calculate_score(board, *number);
                 break 'outer;
             }
